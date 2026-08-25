@@ -1,0 +1,24 @@
+// Cadence Spectre Netlist: Human Body Bio-Impedance Equivalent Model
+// Project: Design and Optimization of a Low-Power Low-Noise CMOS ECG Front-End IC
+// Technology: 180nm CMOS Process (Vdd = 1.8V)
+
+simulator lang=spectre
+
+subckt body_model (vin_gen_p vin_gen_n electrode_p electrode_n drl_feedback)
+
+    // Tissue Bulk Resistance (Rs = 500 ohms)
+    R_tissue_p (vin_gen_p node_p1) resistor r=500
+    R_tissue_n (vin_gen_n node_n1) resistor r=500
+
+    // Epidermis Skin-Electrode Parallel RC Interface (Rp = 50k, Cp = 10nF)
+    R_skin_p (node_p1 electrode_p) resistor r=50k
+    C_skin_p (node_p1 electrode_p) capacitor c=10n
+
+    R_skin_n (node_n1 electrode_n) resistor r=50k
+    C_skin_n (node_n1 electrode_n) capacitor c=10n
+
+    // Driven Right Leg Return Bio-Impedance Path
+    R_drl_body (node_p1 drl_node) resistor r=10k
+    C_drl_body (drl_node drl_feedback) capacitor c=47n
+
+ends body_model

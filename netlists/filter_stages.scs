@@ -1,0 +1,30 @@
+// Cadence Spectre Netlist: Filter Stages (HPF, LPF, 50Hz Notch Filter)
+// Project: Design and Optimization of a Low-Power Low-Noise CMOS ECG Front-End IC
+// Technology: 180nm CMOS Process (Vdd = 1.8V)
+
+simulator lang=spectre
+
+// Sub-circuit 1: High-Pass Filter (Cutoff fc ≈ 0.5 Hz)
+subckt high_pass_filter (in out gnd)
+    C1 (in out) capacitor c=3.18u
+    R1 (out gnd) resistor r=100k
+ends high_pass_filter
+
+// Sub-circuit 2: Low-Pass Filter (Cutoff fc ≈ 100 Hz)
+subckt low_pass_filter (in out gnd)
+    R1 (in out) resistor r=15.9k
+    C1 (out gnd) capacitor c=100n
+ends low_pass_filter
+
+// Sub-circuit 3: 50 Hz Active Twin-T Notch Filter
+subckt notch_filter_50hz (in out vdd gnd vbias)
+    // Upper T-network (Resistors R, R and Capacitor 2C)
+    R_t1 (in node_a) resistor r=31.83k
+    R_t2 (node_a out) resistor r=31.83k
+    C_t1 (node_a gnd) capacitor c=200n
+
+    // Lower T-network (Capacitors C, C and Resistor R/2)
+    C_b1 (in node_b) capacitor c=100n
+    C_b2 (node_b out) capacitor c=100n
+    R_b1 (node_b gnd) resistor r=15.91k
+ends notch_filter_50hz

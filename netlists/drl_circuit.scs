@@ -1,0 +1,29 @@
+// Cadence Spectre Netlist: Driven Right Leg (DRL) Circuit
+// Project: Design and Optimization of a Low-Power Low-Noise CMOS ECG Front-End IC
+// Technology: 180nm CMOS Process (Vdd = 1.8V)
+
+simulator lang=spectre
+
+// Include core OTA sub-circuit
+include "ota_two_stage.scs"
+
+subckt drl_circuit (vin_p vin_n vdrl vdd gnd vbias)
+
+    // Common-Mode Sensing Resistor Divider Network
+    R_sense1 (vin_p vcm_sense) resistor r=100k
+    R_sense2 (vin_n vcm_sense) resistor r=100k
+
+    // Reference Mid-Rail Bias Voltage (0.9V)
+    R_ref1 (vdd vref) resistor r=100k
+    R_ref2 (vref gnd) resistor r=100k
+
+    // High-Gain Inverting DRL Amplifier Core
+    Xdrl_ota (vcm_sense vref vdrl_internal vdd gnd vbias) ota_two_stage
+
+    // Protection Resistor for Patient Safety (Rprot = 100k-ohm)
+    R_prot (vdrl_internal vdrl) resistor r=100k
+
+    // Loop Stabilization Capacitor (Cdrl = 10pF)
+    C_drl (vcm_sense vdrl_internal) capacitor c=10.0p
+
+ends drl_circuit

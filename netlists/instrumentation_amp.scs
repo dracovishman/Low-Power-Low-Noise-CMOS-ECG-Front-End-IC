@@ -1,0 +1,29 @@
+// Cadence Spectre Netlist: Instrumentation Amplifier (IA) Stage
+// Project: Design and Optimization of a Low-Power Low-Noise CMOS ECG Front-End IC
+// Technology: 180nm CMOS Process (Vdd = 1.8V)
+
+simulator lang=spectre
+
+// Include core OTA sub-circuit
+include "ota_two_stage.scs"
+
+subckt instrumentation_amp (vin_p_in vin_n_in vout_p vout_n vdd gnd vbias)
+
+    // Input Capacitors (C1 = 10pF) for AC coupling & DC offset blocking
+    C1_p (vin_p_in ota_in_p) capacitor c=10.0p
+    C1_n (vin_n_in ota_in_n) capacitor c=10.0p
+
+    // Feedback Capacitors (Cf = 0.1pF) setting Midband Gain Av = C1 / Cf = 100 V/V (40 dB)
+    Cf_p (ota_in_p vout_p) capacitor c=0.1p
+    Cf_n (ota_in_n vout_n) capacitor c=0.1p
+
+    // Pseudo-Resistor Feedback Network (Rf ~ 3.18 T-ohm equivalent)
+    // Implemented via MOS transistors operating in off-state / weak inversion
+    M_rf1 (ota_in_p vout_p vout_p vdd) pmos w=0.5u l=2.0u m=1
+    M_rf2 (ota_in_n vout_n vout_n vdd) pmos w=0.5u l=2.0u m=1
+
+    // Fully Differential Core OTA Amplifiers
+    Xota_p (ota_in_p gnd vout_p vdd gnd vbias) ota_two_stage
+    Xota_n (ota_in_n gnd vout_n vdd gnd vbias) ota_two_stage
+
+ends instrumentation_amp

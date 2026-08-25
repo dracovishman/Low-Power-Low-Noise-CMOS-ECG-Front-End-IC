@@ -1,0 +1,34 @@
+// Cadence Spectre Netlist: Two-Stage Operational Transconductance Amplifier (OTA)
+// Project: Design and Optimization of a Low-Power Low-Noise CMOS ECG Front-End IC
+// Technology: 180nm CMOS Process (Vdd = 1.8V)
+
+simulator lang=spectre
+
+subckt ota_two_stage (vin_p vin_n vout vdd gnd vbias)
+
+    // First Stage: PMOS Differential Pair Input (M7, M8)
+    // Sub-threshold biased with large gate area (W=36u, L=0.5u) for high gm and low flicker noise
+    M7  (net_d7 vin_p net_tail vdd) pmos w=36.0u l=0.5u m=1
+    M8  (net_d8 vin_n net_tail vdd) pmos w=36.0u l=0.5u m=1
+
+    // First Stage: Active NMOS Load (M0, M1) with elongated channel length for high output resistance
+    M0  (net_d7 net_d7 gnd gnd) nmos w=12.0u l=1.0u m=1
+    M1  (net_d8 net_d7 gnd gnd) nmos w=12.0u l=1.0u m=1
+
+    // First Stage Tail Current Mirror Source (M2)
+    M2  (net_tail vbias vdd vdd) pmos w=24.0u l=1.0u m=1
+
+    // Second Stage: NMOS Common-Source Driver (M3)
+    M3  (vout net_d8 gnd gnd) nmos w=48.0u l=0.5u m=1
+
+    // Second Stage: Active PMOS Current Load (M10, M11)
+    M10 (net_b10 vbias vdd vdd) pmos w=36.0u l=1.0u m=1
+    M11 (vout vbias vdd vdd) pmos w=36.0u l=1.0u m=1
+
+    // Master Bias Reference Transistor (M12)
+    M12 (vbias vbias vdd vdd) pmos w=18.0u l=2.0u m=1
+
+    // Miller Frequency Compensation Capacitor (Cc = 2.5pF)
+    Cc  (net_d8 vout) capacitor c=2.5p
+
+ends ota_two_stage

@@ -1,0 +1,52 @@
+// Cadence Spectre Netlist: Top-Level Integrated ECG AFE Testbench
+// Project: Design and Optimization of a Low-Power Low-Noise CMOS ECG Front-End IC
+// Authors: Jairus S. Solomon, Subham P. Gupta, Vinayak S. Salunke, Dr. Md. Sadullah
+// Institution: Vellore Institute of Technology (VIT), Vellore, India
+
+simulator lang=spectre
+
+// Include Sub-Block Netlists
+include "ota_two_stage.scs"
+include "instrumentation_amp.scs"
+include "drl_circuit.scs"
+include "filter_stages.scs"
+include "body_model.scs"
+
+// Global Supplies and Bias Sources
+Vdd (vdd 0) vsource dc=1.8
+Vgnd (gnd 0) vsource dc=0.0
+Vbias (vbias 0) vsource dc=1.2
+
+// Differential Bio-Signal Generator Input Sources (Simulating ECG millivolt signal)
+Vin_ac (vin_raw_p vin_raw_n) vsource dc=0.0 mag=1.0m phase=0
+Vcm_in (vin_raw_n 0) vsource dc=0.9 mag=0.0
+
+// Body Model Instantiation
+Xbody (vin_raw_p vin_raw_n elec_p elec_n vdrl) body_model
+
+// Instrumentation Amplifier Stage
+Xia (elec_p elec_n ia_out_p ia_out_n vdd gnd vbias) instrumentation_amp
+
+// Driven Right Leg (DRL) Circuit
+Xdrl (elec_p elec_n vdrl vdd gnd vbias) drl_circuit
+
+// Filter Stages
+Xhpf (ia_out_p hpf_out gnd) high_pass_filter
+Xnotch (hpf_out notch_out vdd gnd vbias) notch_filter_50hz
+Xlpf (notch_out lpf_out gnd) low_pass_filter
+
+// Final High-Gain OTA Output Stage
+Xota_final (lpf_out gnd vout_afe vdd gnd vbias) ota_two_stage
+
+// Simulation Analyses Directives
+// 1. DC Operating Point Analysis
+dcOp dc write="spectre.dc"
+
+// 2. AC Frequency Response Analysis (1 mHz to 100 MHz)
+acSweep ac start=1.0m stop=100.0M dec=20 annotate=status
+
+// 3. Transient Analysis (0 to 10 seconds for ECG waveform observation)
+transient Analysis tran stop=10s errpreset=moderate
+
+// Output Save Options
+save vout_afe ia_out_p ia_out_n lpf_out notch_out vdrl elec_p elec_n
