@@ -1,13 +1,11 @@
 # GitHub Linguist Language Detection Configuration
-# Overrides file to exclude Python helper/verification scripts from GitHub language stats
-
-# Treat all Python scripts as vendored/helper utilities so they are excluded from language statistics
+# Exclude Python helper scripts from GitHub language statistics
 *.py linguist-vendored
 src/*.py linguist-vendored
 
-# Ensure Cadence Spectre netlist files (.scs) are recognized as SPICE language
+# Label Cadence Spectre netlists (.scs) as SPICE language
 *.scs linguist-language=SPICE
 
-# Mark documentation files explicitly
+# Documentation files
 docs/* linguist-documentation
 *.md linguist-documentation
