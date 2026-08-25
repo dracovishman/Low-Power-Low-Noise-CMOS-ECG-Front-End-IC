@@ -1,0 +1,2 @@
+# Exclude Verilog HDL from GitHub language statistics
+*.py linguist-vendored
