@@ -168,6 +168,9 @@ python src/plot_results.py
 4. M. Steyaert, W. Sansen, and C. Zhongyuan, *"A micropower low-noise monolithic instrumentation amplifier for medical purposes,"* IEEE Journal of Solid-State Circuits, 1987.
 5. B. B. Winter and J. G. Webster, *"Driven right leg circuit design,"* IEEE Transactions on Biomedical Engineering, 1983.
 
+## 👥 Authors
+- **Vinayak Salunke** (@dracovishman)
+- **Subham Prasad Gupta** (@Shubham-G04)
 ---
 
 ## 📄 License
