@@ -170,7 +170,7 @@ python src/plot_results.py
 
 ## 👥 Authors
 - **Vinayak Salunke** (@dracovishman)
-- **Subham Prasad Gupta** (@Shubham-G04)
+- **Subham Prasad Gupta** (@Shubham-G04) 
 ---
 
 ## 📄 License
